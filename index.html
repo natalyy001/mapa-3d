@@ -6,8 +6,9 @@
   <title>MapTiler Globe projection</title>
   <script src="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.umd.min.js"></script>
   <link href="https://cdn.maptiler.com/maptiler-sdk-js/v3.0.1/maptiler-sdk.css" rel="stylesheet" />
-   <!-- Importing MapTiler 3D js -->
-<script src="https://cdn.maptiler.com/maptiler-3d/v2.0.2/maptiler-3d.umd.min.js"></script>
+  <script src="https://cdn.maptiler.com/maptiler-3d/v2.0.2/maptiler-3d.umd.min.js"></script>
+  <!-- Agregar referencia a mapLoader.js -->
+  <script src="mapLoader.js"></script>
   <style>
     body { margin: 0; padding: 0; }
     #map { position: absolute; top: 0; bottom: 0; width: 100%; background: #000; }
@@ -16,29 +17,28 @@
 <body>
   <div id="map"></div>
   <script>
-      //maptilersdk.config.apiKey = 'YOUR_MAPTILER_API_KEY_HERE';
       const map = new maptilersdk.Map({
-        container: 'map', // container's id or the HTML element to render the map
+        container: 'map',
         style:  'https://api.maptiler.com/maps/0195f90c-ecf4-7bec-bb72-49a4b1be05a7/style.json?key=de92WADKnMvXxMIlt6hS',
-        center: [-15.45, -21.27], // starting position [lng, lat]
-        zoom: 0.75, // starting zoom
-        projection: 'globe' //enable globe projection
+        center: [-15.45, -21.27],
+        zoom: 0.75,
+        projection: 'globe'
       });
 
       (async () => {
         await map.onReadyAsync();
 
+        // Cargar la capa GeoJSON
+        loadGeoJSONLayer(map, 'map.geojson');
+
         const layer3D = new maptiler3d.Layer3D("custom-3D-layer");
         map.addLayer(layer3D);
 
-        // Increasing the intensity of the ambient light
+        // Configuración de iluminación
         layer3D.setAmbientLight({intensity: 2});
-
-        // Adding a point light
         layer3D.addPointLight("point-light", {intensity: 30});
 
-
-
+        // Cargar modelo 3D
         const originalDuckID = "duck";
         await layer3D.addMeshFromURL(
           originalDuckID,
@@ -46,11 +46,9 @@
           {
             scale: 100,
             heading: 155,
-            lngLat: [-74.101731, 4.736561 ]
+            lngLat: [-74.101731, 4.736561]
           }
         );
-
-
       })();
   </script>
 </body>
